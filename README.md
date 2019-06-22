@@ -1,4 +1,4 @@
-# West Point IS450 2006
+# West Point IS450 2007
 
 Assorted PHP scripts used in my Distributed Application Engineering course at West Point in 2007. This was focused on the LAMP stack.
 
