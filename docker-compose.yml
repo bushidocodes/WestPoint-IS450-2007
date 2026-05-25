@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: abc
+      MYSQL_DATABASE: isd
+    volumes:
+      - ./Final Project/isdDumpVer2.sql:/docker-entrypoint-initdb.d/isd.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pabc"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:

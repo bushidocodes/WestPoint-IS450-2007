@@ -151,7 +151,7 @@ require_once("Laptop.php");
 			{
 				print("Equipment Insertion - Class OK</br>");
 			}
-			if($role = 'laptop')
+			if($role == 'laptop')
 			{
 				$equip = $this->mgr->mgrAddLaptop($serialNumber,$image);			
 				if(!$equip)
@@ -181,7 +181,7 @@ require_once("Laptop.php");
 			$equip->setRole($role);
 			$equip = $equip->determineRole();
 			$equip = $equip->search();
-			if(is_a($equip,'laptop'))
+			if(is_a($equip,'Laptop'))
 			{
 				$equip = $this->mgr->mgrModifyLaptop($oldSN,$image);		
 			}
@@ -204,7 +204,7 @@ require_once("Laptop.php");
 			$equip = $equip->determineRole();
 			$equip = $equip->search();
 #			UNNEEDED BECAUSE A DELETION OF EQUIPMENT CASCADES TO LAPTOP
-#			if(is_a($equip,'laptop'))
+#			if(is_a($equip,'Laptop'))
 #			{
 #				$equip = $this->mgr->mgrDeleteLaptop($serialNumber);		
 #			}
@@ -259,8 +259,8 @@ require_once("Laptop.php");
 				</thead>
 				<tbody>");		
 			}
-			print("<tr bgcolor = '" . $color . "'> <td>".$this->getSerialNumber(). "</td><td>". $this->getAvailability() . "</td><td>".$this->getSerialNumber(). "</td><td>".$this->getSerialNumber(). "</td><td>".$this->getSerialNumber(). "</td><td>".$this->getSerialNumber(). "</td><td>" .
-				$this->getDateAdded() . "</td>");
+			print("<tr bgcolor = '" . $color . "'> <td>".$this->getSerialNumber(). "</td><td>". $this->getAvailability() . "</td><td>".$this->getDateAdded(). "</td><td>".$this->getWorkingStatus(). "</td><td>".$this->getRole(). "</td><td>" .
+				(method_exists($this, 'getImage') ? $this->getImage() : '') . "</td>");
 			if($displayOne)
 			{
 				print("</tbody> </table>");

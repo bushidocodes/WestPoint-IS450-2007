@@ -1,5 +1,5 @@
 <?php
-require_once("AbstractManager.php");
+require_once("AbstractManagerClass.php");
 
 class PersonManager extends AbstractManager 
 {
@@ -92,7 +92,7 @@ class PersonManager extends AbstractManager
 		$resultArray = array();
 		$query = "SELECT * FROM personTable ORDER BY lastName ASC";
 		$resultSet = $this->mDb->Execute($query);
-		if(!resultSet)
+		if(!$resultSet)
 		{
 			print($this->mDb->errorMsg());
 		}

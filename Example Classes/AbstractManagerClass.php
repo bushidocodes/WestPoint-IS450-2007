@@ -1,17 +1,17 @@
-<?php  
-	require_once ('adodb/adodb.inc.php');
+<?php
+require_once(dirname(__FILE__) . '/../adodb/adodb.inc.php');
 
 /**
- *	AbstractManager that raises all standard operations to the parent 
+ *	AbstractManager that raises all standard operations to the parent
  *  class
  */
-	abstract class AbstractManager 
+	abstract class AbstractManager
 	{
 
 		protected $mDb;  //available to this class and subclasses
 		private $isConnected;
-		
-		
+
+
 	/**
 	 * Constructor for the AbstractManager
 	 */
@@ -20,11 +20,11 @@
 		$this->mDb = null;
 		$this->OpenDb();
 	} //end __construct()
-	
+
 
 	/**
-	 *	Checks for existence of a connection to a ADODB supported 
-	 *  database. Failing a connection it opens the database with 
+	 *	Checks for existence of a connection to a ADODB supported
+	 *  database. Failing a connection it opens the database with
 	 *  ADODB generic connections.
 	 */
 	private function OpenDb ()
@@ -32,14 +32,16 @@
 		$resultCode = false;
 		if (is_null($this->mDb))
 		{
-			$this->mDb = ADONewConnection('mysqlt');
-			$this->mDb->Connect('localhost', 'root', 'abc', 'faq');
+			$host = getenv('MYSQL_HOST') ?: 'localhost';
+			$this->mDb = ADONewConnection('mysqli');
+			$this->mDb->Connect($host, 'root', 'abc', 'isd');
+			$this->mDb->SetFetchMode(ADODB_FETCH_ASSOC);
 			if(!$this->mDb)
 			{
-				die( "<br/>AbstractManager::OpenDb() Could not " . 
-					"connect to Database Server: " . 'localhost' );
+				die( "<br/>AbstractManager::OpenDb() Could not " .
+					"connect to Database Server: " . $host );
 			}
-			else 
+			else
 			{
 				$this->isConnected = true;
 				$resultCode = true;
@@ -50,7 +52,7 @@
 
 
 	/**
-	 * Closes a connection to the database with ADODB supported 
+	 * Closes a connection to the database with ADODB supported
 	 * database command
 	 */
 	protected function CloseDb()
@@ -59,17 +61,17 @@
 		$this->isConnected = false;
 		$this->mDb = null;
 		print("Database is closed\n");
-		return true;				
+		return true;
 	} //end CloseDb()
 
 	/**
 	 * Determine if there is a valid connection
 	 */
-	final public function getConnection () 
+	final public function getConnection ()
 	{
 		return $this->isConnected;
 	}
-	
+
 
 } //end AbstractManager
 ?>
