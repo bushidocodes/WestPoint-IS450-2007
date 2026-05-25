@@ -32,7 +32,7 @@ require_once(dirname(__FILE__) . '/../adodb/adodb.inc.php');
 		if (is_null($this->mDb))
 		{
 			$host = getenv('MYSQL_HOST') ?: 'localhost';
-			$this->mDb = ADONewConnection('mysqlt');
+			$this->mDb = ADONewConnection('mysqli');
 			$this->mDb->Connect($host, 'root', 'abc', 'isd');
 			$this->mDb->SetFetchMode(ADODB_FETCH_ASSOC);
 			if(!$this->mDb)

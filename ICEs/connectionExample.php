@@ -2,7 +2,7 @@
 
 	require_once(dirname(__FILE__) . '/../adodb/adodb.inc.php');
 
-	$conn = ADONewConnection('mysqlt');
+	$conn = ADONewConnection('mysqli');
 	$conn->SetFetchMode(ADODB_FETCH_ASSOC);
 	$host = getenv('MYSQL_HOST') ?: 'localhost';
 	$myDb = $conn->Connect($host,'root','abc','isd');
