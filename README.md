@@ -33,17 +33,33 @@ The final project is a **military equipment checkout/reservation management syst
 │   ├── userSearchByIDScript.php    # Script: search user by ID
 │   └── userSearchByLastNameScript.php  # Script: search user by last name
 │
-└── ICEs/                           # In-Class Exercises
-    ├── array.php                   # Associative array syntax demo
-    ├── automobile.php              # Basic Automobile class
-    ├── connectionExample.php       # ADODB connection test
-    ├── testAutomobile.php          # Test instantiation
-    └── Lesson17-OOP/
-        ├── AutomobileClass.php     # OOP Automobile with constructor
-        ├── TruckClass.php          # Truck extending Automobile
-        ├── testEquipment.php       # Tests for Automobile
-        ├── testTruck.php           # Tests for Truck inheritance
-        └── TestSystem.php          # Combined test runner
+├── ICEs/                           # In-Class Exercises
+│   ├── array.php                   # Associative array syntax demo
+│   ├── automobile.php              # Basic Automobile class
+│   ├── connectionExample.php       # ADODB connection test
+│   ├── personForm.htm              # HTML form for person search
+│   ├── testAutomobile.php          # Test instantiation
+│   └── Lesson17-OOP/
+│       ├── AutomobileClass.php     # OOP Automobile with constructor
+│       ├── TruckClass.php          # Truck extending Automobile
+│       ├── testEquipment.php       # Tests for Automobile
+│       ├── testTruck.php           # Tests for Truck inheritance
+│       └── TestSystem.php          # Combined test runner
+│
+├── adodb/                          # ADODB 5.22.11 library (required dependency)
+├── docs/turn in/                   # Original submission artifacts
+│   ├── AppDesign.vsd               # Application design (Visio)
+│   ├── DBDesign.vsd                # Database design (Visio)
+│   ├── UseCaseDiagram.vsd          # Use case diagram (Visio)
+│   ├── ISDEquipmentCheckoutPlan.docx
+│   ├── ConfigurationMgmt.docx
+│   ├── UseCaseForms.docx
+│   ├── WebDiagram.docx
+│   ├── team4BugReport.xlsx
+│   ├── Timeline.xlsx
+│   └── webLayout.pptx
+├── Dockerfile                      # PHP 7.4 + Apache + mysqli
+└── docker-compose.yml              # Full stack: web + MySQL 5.7
 ```
 
 ---
@@ -106,16 +122,33 @@ Sample data includes serial numbers `000111`–`000120` (a mix of laptops and pr
 
 ### Setting Up
 
-> **Note:** This code targets a 2007 LAMP environment. It uses the ADODB database abstraction library and MySQL 4.x syntax.
+#### Option A: Docker (recommended)
 
-1. Install Apache, PHP 5.x, and MySQL 4.x (or a compatible version).
-2. Install [ADODB for PHP](https://adodb.org/) and ensure it is on the PHP include path.
+Requires Docker and Docker Compose.
+
+```bash
+docker-compose up --build
+```
+
+This starts PHP 7.4 + Apache on `http://localhost:8080` and MySQL 5.7 on port 3306. The schema and seed data load automatically on first run.
+
+Test pages:
+- `http://localhost:8080/Final%20Project/testAll.php` — equipment integration tests
+- `http://localhost:8080/Example%20Classes/testPerson.php` — person hierarchy tests
+- `http://localhost:8080/Example%20Classes/userListAll.php` — list all users
+
+#### Option B: Manual LAMP
+
+> **Note:** This code targets a 2007 LAMP environment.
+
+1. Install Apache, PHP 5.x–7.4, and MySQL 5.x.
+2. ADODB 5.22.11 is included in the `adodb/` directory — no separate install needed.
 3. Create the database and load schema + seed data:
    ```bash
    mysql -u root -p < "Final Project/isdDumpVer2.sql"
    ```
-4. Update the hard-coded credentials in `AbstractManager.php` if your MySQL root password differs from `abc`.
-5. Place files under your Apache document root and navigate to `testAll.php` to verify the setup.
+4. The hard-coded MySQL credentials are `root` / `abc`. Update `AbstractManager.php` and `AbstractManagerClass.php` if your setup differs.
+5. Place the repo under your Apache document root and navigate to `Final Project/testAll.php`.
 
 ---
 
@@ -149,17 +182,32 @@ $this->mDb->Connect('localhost', 'root', 'abc', 'isd');
 
 ## Known Bugs & Security Issues
 
-This is student coursework. The issues below are typical of the era and are documented here for educational context.
+This is student coursework. The items below are documented for educational context.
 
-### Bugs
+### Bugs Fixed
 
-| File | Line | Issue |
-|------|------|-------|
-| `Equipment.php` | ~154 | Assignment `=` used instead of comparison `==` in `if ($role = 'laptop')` — always evaluates true |
-| `Equipment.php` | ~262 | `display()` outputs wrong field values (copy-paste error) |
-| `EquipmentManager.php` | ~171 | Missing `$` prefix: `if(!resultSet)` should be `if(!$resultSet)` |
-| `EquipmentManager.php` | multiple | Error checks are inverted — `if($resultSet->fields)` when the intent is `if(!$resultSet->fields)` |
-| `userListAll.php` | — | Requires a missing `./includes/` directory (header/footer/class includes); will fatal-error as-is |
+The following bugs were corrected when this code was recovered and restored:
+
+| File | Issue | Fix |
+|------|-------|-----|
+| `Equipment.php` | `if($role = 'laptop')` — assignment instead of comparison, always true | Changed to `==` |
+| `Equipment.php` | `display()` printed `getSerialNumber()` for every column (copy-paste error) | Fixed to call correct getter per column |
+| `Equipment.php` | `is_a($equip,'laptop')` — wrong case for class name | Changed to `'Laptop'` |
+| `EquipmentManager.php` | `if(!resultSet)` — missing `$` sigil | Fixed to `$resultSet` |
+| `EquipmentManager.php` | INSERT/UPDATE/DELETE used `$resultSet->fields` to check success — fatal error in PHP 7+ since Execute() returns `bool` for non-SELECT | Fixed to `if(!$resultSet)` |
+| `EquipmentManager.php` | `mgrSearchForLaptopBySerialNumber` joined `submitReservationTable`, returning no rows for unloaned laptops | Removed extraneous join |
+| `EquipmentManager.php` | Serial number values not quoted in SQL strings | Added quotes around varchar values |
+| `PersonManagerClass.php` | `require_once("AbstractManager.php")` — wrong filename | Fixed to `AbstractManagerClass.php` |
+| `PersonManagerClass.php` | `if(!resultSet)` — missing `$` sigil | Fixed to `$resultSet` |
+| `AbstractManager.php` / `AbstractManagerClass.php` | Hard-coded `adodb/` relative path breaks depending on working directory | Changed to `dirname(__FILE__) . '/../adodb/'` |
+| `AbstractManagerClass.php` | Connected to `faq` database (doesn't exist) | Changed to `isd` |
+| `connectionExample.php` | Windows backslash in `adodb\adodb.inc.php` | Fixed to forward slash; updated to use `dirname(__FILE__)` |
+| `isdDumpVer2.sql` | Missing closing `'` in `'laptop)` on one row | Fixed |
+| `isdDumpVer2.sql` | Missing comma before `PRIMARY KEY` in `laptops` table | Fixed |
+| `isdDumpVer2.sql` | Table names in lowercase (`persontable`, `equipmenttable`) didn't match PHP code's mixed-case queries | Renamed to match PHP (`personTable`, `equipmentTable`, etc.) |
+| `isdDumpVer2.sql` | `cadetTable` and `instructorTable` missing entirely | Added schemas + sample data |
+| `isdDumpVer2.sql` | `personTable` had no `role` column, but `buildPerson()` and `determineRole()` require it | Added `role` column with values `cadet`/`instructor` |
+| `userListAll.php` | Required missing `./includes/` directory | Created stub `includes/` with header, footer, body, and PersonClass shim |
 
 ### Security Issues
 
