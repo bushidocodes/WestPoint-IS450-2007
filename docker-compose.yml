@@ -12,6 +12,8 @@ services:
         condition: service_healthy
     environment:
       MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: abc
 
   db:
     image: mysql:8.0
