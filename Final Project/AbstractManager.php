@@ -33,7 +33,9 @@ require_once(dirname(__FILE__) . '/../adodb/adodb.inc.php');
 		{
 			$host = getenv('MYSQL_HOST') ?: 'localhost';
 			$this->mDb = ADONewConnection('mysqli');
-			$this->mDb->Connect($host, 'root', 'abc', 'isd');
+			$user = getenv('MYSQL_USER') ?: 'root';
+			$pass = getenv('MYSQL_PASSWORD') ?: 'abc';
+			$this->mDb->Connect($host, $user, $pass, 'isd');
 			$this->mDb->SetFetchMode(ADODB_FETCH_ASSOC);
 			if(!$this->mDb)
 			{
