@@ -12,7 +12,7 @@ class PersonManager extends AbstractManager
 	public function mgrSearchPersonByID($id)
 	{
 		$tempPerson = new Person();
-		$query = "SELECT * FROM personTable WHERE userID = '" . $id . "'";
+		$query = "SELECT * FROM personTable WHERE userID = " . $this->mDb->qStr($id);
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet || !$resultSet->fields)
 		{
@@ -32,7 +32,7 @@ class PersonManager extends AbstractManager
 	{
 		$tempPerson = new Person();
 		$resultArray = array();
-		$query = "SELECT * FROM personTable WHERE lastName = '" . $name . "'";
+		$query = "SELECT * FROM personTable WHERE lastName = " . $this->mDb->qStr($name);
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
@@ -59,7 +59,7 @@ class PersonManager extends AbstractManager
 	public function mgrGetInstructor($instructor)
 	{
 		//Now add the attributes that are specific to an instructor
-		$query = "SELECT * FROM instructorTable WHERE userID = '" . $instructor->getUserID() . "'";
+		$query = "SELECT * FROM instructorTable WHERE userID = " . $this->mDb->qStr($instructor->getUserID());
 		$result = $this->mDb->Execute($query);
 		if(!$result)
 			print($this->mDb->errorMsg());
@@ -74,7 +74,7 @@ class PersonManager extends AbstractManager
 	public function mgrGetCadet($cadet)
 	{	
 		//Now add the attributes that are specific to an instructor
-		$query = "SELECT * FROM cadetTable WHERE userID = '" . $cadet->getUserID() . "'";
+		$query = "SELECT * FROM cadetTable WHERE userID = " . $this->mDb->qStr($cadet->getUserID());
 		$result = $this->mDb->Execute($query);
 		if(!$result)
 			print($this->mDb->errorMsg());
