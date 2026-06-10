@@ -31,6 +31,7 @@ class PersonManager extends AbstractManager
 	public function mgrSearchPersonByLastName($name)
 	{
 		$tempPerson = new Person();
+		$resultArray = array();
 		$query = "SELECT * FROM personTable WHERE lastName = '" . $name . "'";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
