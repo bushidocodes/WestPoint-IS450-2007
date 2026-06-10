@@ -8,7 +8,11 @@
 	$user= new Person();
 	$user = $user->searchPersonByID($_POST['userID']);
 	//$user = $user->searchPersonByID('dp0270');
-	$user->display();
+	if($user) {
+		$user->display();
+	} else {
+		echo "<p>Error: " . htmlspecialchars($_SESSION['ERROR']) . "</p>";
+	}
 	
 	require_once("./includes/footer.php");
 ?>
