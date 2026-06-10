@@ -14,8 +14,9 @@ class PersonManager extends AbstractManager
 		$tempPerson = new Person();
 		$query = "SELECT * FROM personTable WHERE userID = '" . $id . "'";
 		$resultSet = $this->mDb->Execute($query);
-		if(!$resultSet->fields)
+		if(!$resultSet || !$resultSet->fields)
 		{
+			if(session_status() === PHP_SESSION_NONE) session_start();
 			$_SESSION['ERROR'] = "The person does not exist";
 			return false;
 		}
@@ -34,6 +35,7 @@ class PersonManager extends AbstractManager
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
+			if(session_status() === PHP_SESSION_NONE) session_start();
 			$_SESSION['ERROR'] = $this->mDb->errorMsg();
 		}
 		else 
