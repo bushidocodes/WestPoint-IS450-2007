@@ -113,6 +113,7 @@ class EquipmentManager extends AbstractManager
 		else
 		{
 			print("Data Update of laptops Complete");
+			return true;
 		}
 	}
 
