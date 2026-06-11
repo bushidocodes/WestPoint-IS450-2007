@@ -9,7 +9,7 @@
 	
 	$userArray = array();
 	//$userArray = $user->searchPersonByLastName('stanton');	
-	$userArray = $user->searchPersonByLastName($_POST['lastName']);
+	$userArray = $user->searchPersonByLastName($_POST['lastName'] ?? '');
 	
 
 	$user->printPersonTable($userArray);

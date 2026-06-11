@@ -7,7 +7,7 @@
 	
 	$user= new Person();
 	$personArray = $user->getAllPeople();
-	$addedUserID = $_GET['addedPersonID'];
+	$addedUserID = $_GET['addedPersonID'] ?? null;
 	$user->printPersonTable($personArray, $addedUserID);
 	
 	require_once("./includes/footer.php");
