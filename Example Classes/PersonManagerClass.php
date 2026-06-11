@@ -89,6 +89,26 @@ class PersonManager extends AbstractManager
 	}	
 	
 	
+	public function mgrGetRoles()
+	{
+		$rolesArray = array();
+		$query = "SELECT DISTINCT role FROM personTable ORDER BY role ASC";
+		$resultSet = $this->mDb->Execute($query);
+		if(!$resultSet)
+		{
+			print($this->mDb->errorMsg());
+		}
+		else
+		{
+			while(!$resultSet->EOF)
+			{
+				$rolesArray[] = $resultSet->fields['role'];
+				$resultSet->MoveNext();
+			}
+		}
+		return $rolesArray;
+	}
+
 	public function mgrGetAllPeople()
 	{
 		$tempPerson = new Person();
