@@ -75,7 +75,6 @@ Test pages (run against the live database):
 ├── sql/isd.sql                 # MySQL schema and seed data
 ├── tests/                      # Browser-run test scripts (PASSED/FAILED output)
 │
-├── ICEs/                       # In-Class Exercises (course history, unchanged)
 ├── docs/turn in/               # Original 2007 submission artifacts (Visio, docx)
 ├── adodb/                      # ADODB 5.22.11 library (required dependency)
 ├── index.php                   # Redirects / to /app/
@@ -161,13 +160,3 @@ Remaining period-authentic quirks, kept intentionally:
 - **Plaintext passwords** in `authenticationTable` (no login flow exists yet).
 - **HTML via string concatenation** — no templating engine.
 - **No framework** — raw PHP, exactly as taught in 2007.
-
----
-
-## In-Class Exercises (ICEs)
-
-Progressive exercises building up to the final project patterns, preserved as-is:
-
-- **`array.php`** — Basic associative array syntax.
-- **`automobile.php` / `connectionExample.php`** — First class definition and first database connection.
-- **`Lesson17-OOP/`** — Full OOP example: `AutomobileClass` → `TruckClass` inheritance, with accompanying test files.
