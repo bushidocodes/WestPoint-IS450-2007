@@ -1,8 +1,50 @@
 # West Point IS450 — Distributed Application Engineering (2007)
 
-Assorted PHP scripts from my **IS450 Distributed Application Engineering** course at West Point (2007), focused on the LAMP stack (Linux, Apache, MySQL, PHP).
+PHP coursework from my **IS450 Distributed Application Engineering** course at West Point (2007), focused on the LAMP stack (Linux, Apache, MySQL, PHP) — restored, modernized to PHP 8, and consolidated into a working application.
 
-The final project is a **military equipment checkout/reservation management system** — a web app for managing inventory such as laptops, projectors, rifles, night vision goggles, and body armor.
+The application is a **military equipment checkout/reservation management system** — a web app for managing loanable inventory (laptops, projectors) and the cadets and instructors who borrow it.
+
+---
+
+## Running It
+
+Requires Docker and Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+Then open **http://localhost:8080/** (redirects to `/app/`). The schema and seed
+data load automatically on first run. If you change `sql/isd.sql`, recreate the
+database volume with `docker compose down -v` before starting again.
+
+Test pages (run against the live database):
+- `http://localhost:8080/tests/testAll.php` — equipment integration tests
+- `http://localhost:8080/tests/testPerson.php` — person hierarchy + CRUD tests
+- `http://localhost:8080/tests/Equipment.test.php`, `Laptop.test.php`, `EquipmentManager.test.php` — unit tests
+
+---
+
+## User Stories
+
+**People** (cadets, instructors, admins)
+- List everyone in the system
+- Find a person by user ID or last name
+- Add a person, with role-specific details (a cadet's company/year/instructor, an instructor's course)
+- Edit a person — including role changes, which rebuild the role-specific detail row
+- Delete a person (cascades to detail, authentication, and reservation rows)
+
+**Equipment** (laptops, projectors)
+- List all equipment with availability status
+- Find equipment by serial number
+- Add equipment, with type-specific details (a laptop's software image, a projector's connector)
+- Edit equipment — including type reclassification
+- Delete equipment (cascades to subtype rows)
+
+**Reservations**
+- See what's checked out, to whom, and when it's due
+- Check out an available item to a person for a date range (marks it unavailable)
+- Check an item back in (frees it for the next checkout)
 
 ---
 
@@ -10,67 +52,40 @@ The final project is a **military equipment checkout/reservation management syst
 
 ```
 .
-├── Final Project/                  # Production application
-│   ├── AbstractManager.php         # Base DB connection manager (ADODB)
-│   ├── Equipment.php               # Core equipment entity class
-│   ├── EquipmentManager.php        # Data access object for equipment
-│   ├── Laptop.php                  # Laptop subclass of Equipment
-│   ├── equipmentManagerClass_old.php  # Older version of EquipmentManager
-│   ├── testAll.php                 # Integration tests
-│   ├── Equipment.test.php          # Unit tests for Equipment
-│   ├── EquipmentManager.test.php   # Unit tests for EquipmentManager
-│   ├── Laptop.test.php             # Unit tests for Laptop
-│   └── isdDumpVer2.sql             # MySQL schema and seed data
+├── app/                        # Web application (UI pages)
+│   ├── index.php               # Dashboard: counts + current reservations
+│   ├── includes/               # Shared header (nav, styles) and footer
+│   ├── people/                 # List / search / add / edit / delete people
+│   ├── equipment/              # List / search / add / edit / delete equipment
+│   └── reservations/           # List / check out / check in
 │
-├── Example Classes/                # Reference implementation (Person hierarchy)
-│   ├── AbstractManagerClass.php    # Alternate abstract manager
-│   ├── PersonClass.php             # Base Person entity class
-│   ├── PersonManagerClass.php      # Data access object for people
-│   ├── CadetClass.php              # Cadet subclass of Person
-│   ├── InstructorClass.php         # Instructor subclass of Person
-│   ├── testPerson.php              # Test suite for Person hierarchy
-│   ├── userListAll.php             # Script: list all users
-│   ├── userSearchByIDScript.php    # Script: search user by ID
-│   └── userSearchByLastNameScript.php  # Script: search user by last name
+├── classes/                    # Domain library (Manager / Entity pattern)
+│   ├── AbstractManager.php     # ADODB connection lifecycle (base for all managers)
+│   ├── Person.php              # Person entity + CRUD operations
+│   ├── Cadet.php               # Cadet subclass (company, year, instructor)
+│   ├── Instructor.php          # Instructor subclass (course)
+│   ├── PersonManager.php       # All SQL for the person hierarchy
+│   ├── Equipment.php           # Equipment entity + CRUD operations
+│   ├── Laptop.php              # Laptop subclass (software image)
+│   ├── Projector.php           # Projector subclass (connector)
+│   ├── EquipmentManager.php    # All SQL for the equipment hierarchy
+│   ├── Reservation.php         # Checkout/checkin operations
+│   └── ReservationManager.php  # All SQL for reservations
 │
-├── ICEs/                           # In-Class Exercises
-│   ├── array.php                   # Associative array syntax demo
-│   ├── automobile.php              # Basic Automobile class
-│   ├── connectionExample.php       # ADODB connection test
-│   ├── personForm.htm              # HTML form for person search
-│   ├── testAutomobile.php          # Test instantiation
-│   └── Lesson17-OOP/
-│       ├── AutomobileClass.php     # OOP Automobile with constructor
-│       ├── TruckClass.php          # Truck extending Automobile
-│       ├── testEquipment.php       # Tests for Automobile
-│       ├── testTruck.php           # Tests for Truck inheritance
-│       └── TestSystem.php          # Combined test runner
+├── sql/isd.sql                 # MySQL schema and seed data
+├── tests/                      # Browser-run test scripts (PASSED/FAILED output)
 │
-├── adodb/                          # ADODB 5.22.11 library (required dependency)
-├── docs/turn in/                   # Original submission artifacts
-│   ├── AppDesign.vsd               # Application design (Visio)
-│   ├── DBDesign.vsd                # Database design (Visio)
-│   ├── UseCaseDiagram.vsd          # Use case diagram (Visio)
-│   ├── ISDEquipmentCheckoutPlan.docx
-│   ├── ConfigurationMgmt.docx
-│   ├── UseCaseForms.docx
-│   ├── WebDiagram.docx
-│   ├── team4BugReport.xlsx
-│   ├── Timeline.xlsx
-│   └── webLayout.pptx
-├── Dockerfile                      # PHP 7.4 + Apache + mysqli
-└── docker-compose.yml              # Full stack: web + MySQL 5.7
+├── ICEs/                       # In-Class Exercises (course history, unchanged)
+├── docs/turn in/               # Original 2007 submission artifacts (Visio, docx)
+├── adodb/                      # ADODB 5.22.11 library (required dependency)
+├── index.php                   # Redirects / to /app/
+├── Dockerfile                  # PHP 8.3 + Apache + mysqli
+└── docker-compose.yml          # Full stack: web + MySQL 8.0
 ```
 
 ---
 
-## Final Project: Equipment Management System
-
-### What It Does
-
-Tracks a pool of loanable military equipment. Users (cadets and instructors) can reserve equipment for a date range. Equipment records are stored hierarchically — a `laptops` table extends the base `equipmentTable`, and a `projectors` table does the same.
-
-### Architecture
+## Architecture
 
 The application follows a **Manager / Entity** pattern common in early 2000s PHP:
 
@@ -78,159 +93,81 @@ The application follows a **Manager / Entity** pattern common in early 2000s PHP
 Equipment (entity)
 ├── knows its own data (serialNumber, availability, role, etc.)
 ├── delegates all database work to EquipmentManager
-└── uses determineRole() as a factory to return Laptop subclass
-
-EquipmentManager (data access object)
-├── extends AbstractManager (ADODB connection)
-├── issues all SQL queries
-└── returns result sets that Equipment interprets
+└── uses determineRole() as a factory to return the Laptop/Projector subclass
 ```
 
-The same pattern is mirrored in the Example Classes directory with `Person` / `PersonManager` / `Cadet` / `Instructor`.
+The same pattern applies to `Person` / `PersonManager` / `Cadet` / `Instructor`
+and to `Reservation` / `ReservationManager`.
 
 ### Class Hierarchy
 
 ```
 AbstractManager
-└── EquipmentManager
+├── EquipmentManager
+├── PersonManager
+└── ReservationManager
 
 Equipment
-└── Laptop
+├── Laptop
+└── Projector
 
 Person
 ├── Cadet
 └── Instructor
+
+Reservation
 ```
 
 ### Database Schema
 
-Database name: `isd` (dump file creates `isd2`).
+Database name: `isd`.
 
 | Table | Key Columns | Notes |
 |-------|-------------|-------|
 | `equipmentTable` | `serialNumber (PK)`, `availability`, `dateAdded`, `workingStatus`, `role` | Base inventory table |
 | `laptops` | `serialNumber (FK)`, `image` | Extends equipmentTable via FK + CASCADE |
 | `projectors` | `serialNumber (FK)`, `connector` | Extends equipmentTable via FK + CASCADE |
-| `personTable` | `userID (PK)`, `lastName`, `firstName`, `email`, `department`, `phoneNumber` | Base user table |
+| `personTable` | `userID (PK)`, `lastName`, `firstName`, `email`, `department`, `phoneNumber`, `role` | Base user table |
 | `cadetTable` | `userID (FK)`, `instructor`, `company`, `year`, `phoneNum` | Extends personTable |
 | `instructorTable` | `userID (FK)`, `course`, `phoneNum` | Extends personTable |
 | `submitReservationTable` | `dateOut`, `dateIn`, `serialNumber (FK)`, `userID (FK)` | Equipment reservations |
-| `authenticationTable` | `userID (FK)`, `password` | Login credentials |
+| `authenticationTable` | `userID (FK)`, `password` | Login credentials (not yet used by the UI) |
 | `departmentTable` | `department (PK)` | BTD, DFL, DPE, EECS, USCC |
 
-Sample data includes serial numbers `000111`–`000120` (a mix of laptops and projectors) and five test user accounts.
+Sample data includes serial numbers `000111`–`000120` (laptops and projectors),
+five user accounts, and five active reservations.
 
-### Setting Up
-
-#### Option A: Docker (recommended)
-
-Requires Docker and Docker Compose.
-
-```bash
-docker-compose up --build
-```
-
-This starts PHP 7.4 + Apache on `http://localhost:8080` and MySQL 5.7 on port 3306. The schema and seed data load automatically on first run.
-
-Test pages:
-- `http://localhost:8080/Final%20Project/testAll.php` — equipment integration tests
-- `http://localhost:8080/Example%20Classes/testPerson.php` — person hierarchy tests
-- `http://localhost:8080/Example%20Classes/userListAll.php` — list all users
-
-#### Option B: Manual LAMP
-
-> **Note:** This code targets a 2007 LAMP environment.
-
-1. Install Apache, PHP 5.x–7.4, and MySQL 5.x.
-2. ADODB 5.22.11 is included in the `adodb/` directory — no separate install needed.
-3. Create the database and load schema + seed data:
-   ```bash
-   mysql -u root -p < "Final Project/isdDumpVer2.sql"
-   ```
-4. The hard-coded MySQL credentials are `root` / `abc`. Update `AbstractManager.php` and `AbstractManagerClass.php` if your setup differs.
-5. Place the repo under your Apache document root and navigate to `Final Project/testAll.php`.
-
----
-
-## Technologies
-
-| Technology | Version / Era |
-|------------|--------------|
-| PHP | 4.x / 5.0 |
-| MySQL | 4.1.8-nt (Windows) |
-| ADODB | ~5.x |
-| Web framework | None — raw PHP |
-| HTML rendering | String concatenation |
-
-Database connections use ADODB's `mysqlt` driver:
-
-```php
-$this->mDb = ADONewConnection('mysqlt');
-$this->mDb->Connect('localhost', 'root', 'abc', 'isd');
-```
-
----
-
-## Design Patterns Demonstrated
+### Design Patterns Demonstrated
 
 - **Abstract base class** — `AbstractManager` centralises the ADODB connection lifecycle.
-- **Inheritance & polymorphism** — `Laptop` extends `Equipment`; `display()` is overridden in each subclass to render type-specific HTML.
-- **Factory method** — `Equipment::determineRole()` inspects the `role` field and returns the appropriate subclass instance.
-- **Data Access Object** — `EquipmentManager` and `PersonManager` isolate all SQL from the entity classes.
+- **Inheritance & polymorphism** — `Laptop`/`Projector` extend `Equipment`; `display()` is overridden per subclass to render type-specific HTML.
+- **Factory method** — `Equipment::determineRole()` and `Person::determineRole()` inspect the `role` field and return the appropriate subclass instance.
+- **Data Access Object** — the `*Manager` classes isolate all SQL from the entity classes.
 
 ---
 
-## Known Bugs & Security Issues
+## Provenance and Modernization
 
-This is student coursework. The items below are documented for educational context.
+This code began as 2007 student coursework targeting PHP 4/5 and MySQL 4.1. It
+has since been restored and modernized:
 
-### Bugs Fixed
+- **PHP 8.3 compatible** — null-safe result handling, `??` defaults for superglobals, `session_status()` guards.
+- **SQL injection fixed** — all user-supplied values pass through ADODB's `qStr()`.
+- **Credentials via environment** — `MYSQL_HOST` / `MYSQL_USER` / `MYSQL_PASSWORD` (defaults `localhost` / `root` / `abc` for manual setups).
+- **Schema repaired** — the original dump had syntax errors, missing tables (`cadetTable`, `instructorTable`), and a missing `role` column; all fixed in `sql/isd.sql`.
+- **Completed the design** — the original submission's use-case documents (see `docs/turn in/`) describe a checkout system, but only the equipment data layer was implemented. The People CRUD, Projector subtype, reservation checkout/checkin flow, and the entire web UI in `app/` were added to realize the original design.
 
-The following bugs were corrected when this code was recovered and restored:
-
-| File | Issue | Fix |
-|------|-------|-----|
-| `Equipment.php` | `if($role = 'laptop')` — assignment instead of comparison, always true | Changed to `==` |
-| `Equipment.php` | `display()` printed `getSerialNumber()` for every column (copy-paste error) | Fixed to call correct getter per column |
-| `Equipment.php` | `is_a($equip,'laptop')` — wrong case for class name | Changed to `'Laptop'` |
-| `EquipmentManager.php` | `if(!resultSet)` — missing `$` sigil | Fixed to `$resultSet` |
-| `EquipmentManager.php` | INSERT/UPDATE/DELETE used `$resultSet->fields` to check success — fatal error in PHP 7+ since Execute() returns `bool` for non-SELECT | Fixed to `if(!$resultSet)` |
-| `EquipmentManager.php` | `mgrSearchForLaptopBySerialNumber` joined `submitReservationTable`, returning no rows for unloaned laptops | Removed extraneous join |
-| `EquipmentManager.php` | Serial number values not quoted in SQL strings | Added quotes around varchar values |
-| `PersonManagerClass.php` | `require_once("AbstractManager.php")` — wrong filename | Fixed to `AbstractManagerClass.php` |
-| `PersonManagerClass.php` | `if(!resultSet)` — missing `$` sigil | Fixed to `$resultSet` |
-| `AbstractManager.php` / `AbstractManagerClass.php` | Hard-coded `adodb/` relative path breaks depending on working directory | Changed to `dirname(__FILE__) . '/../adodb/'` |
-| `AbstractManagerClass.php` | Connected to `faq` database (doesn't exist) | Changed to `isd` |
-| `connectionExample.php` | Windows backslash in `adodb\adodb.inc.php` | Fixed to forward slash; updated to use `dirname(__FILE__)` |
-| `isdDumpVer2.sql` | Missing closing `'` in `'laptop)` on one row | Fixed |
-| `isdDumpVer2.sql` | Missing comma before `PRIMARY KEY` in `laptops` table | Fixed |
-| `isdDumpVer2.sql` | Table names in lowercase (`persontable`, `equipmenttable`) didn't match PHP code's mixed-case queries | Renamed to match PHP (`personTable`, `equipmentTable`, etc.) |
-| `isdDumpVer2.sql` | `cadetTable` and `instructorTable` missing entirely | Added schemas + sample data |
-| `isdDumpVer2.sql` | `personTable` had no `role` column, but `buildPerson()` and `determineRole()` require it | Added `role` column with values `cadet`/`instructor` |
-| `userListAll.php` | Required missing `./includes/` directory | Created stub `includes/` with header, footer, body, and PersonClass shim |
-
-### Security Issues
-
-These reflect common practices of the period and should **not** be replicated in modern code:
-
-- **SQL injection** — All queries are built via string concatenation. No parameterized queries or prepared statements are used anywhere.
-- **Plaintext passwords** — `authenticationTable` stores passwords in cleartext.
-- **Hard-coded credentials** — Database username and password are embedded directly in `AbstractManager.php`.
-- **No input validation** — User-supplied values are passed directly to SQL strings.
-- **No session handling** — Some scripts reference `$_SESSION` without initialising a session.
+Remaining period-authentic quirks, kept intentionally:
+- **Plaintext passwords** in `authenticationTable` (no login flow exists yet).
+- **HTML via string concatenation** — no templating engine.
+- **No framework** — raw PHP, exactly as taught in 2007.
 
 ---
 
 ## In-Class Exercises (ICEs)
 
-Progressive exercises building up to the final project patterns:
+Progressive exercises building up to the final project patterns, preserved as-is:
 
 - **`array.php`** — Basic associative array syntax.
 - **`automobile.php` / `connectionExample.php`** — First class definition and first database connection.
 - **`Lesson17-OOP/`** — Full OOP example: `AutomobileClass` → `TruckClass` inheritance, with accompanying test files.
-
----
-
-## Example Classes
-
-The `Example Classes/` directory applies the same Manager / Entity architecture to a `Person` hierarchy (Cadet / Instructor) instead of Equipment. This appears to be either provided course material or a parallel reference implementation built alongside the final project.
