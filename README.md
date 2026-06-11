@@ -1,8 +1,8 @@
-# West Point IS450 — Distributed Application Engineering (2007)
+# Quartermaster
 
-PHP coursework from my **IS450 Distributed Application Engineering** course at West Point (2007), focused on the LAMP stack (Linux, Apache, MySQL, PHP) — restored, modernized to PHP 8, and consolidated into a working application.
+A **military equipment checkout and reservation system** — a web app for managing loanable inventory (laptops, projectors) and the cadets and instructors who borrow it.
 
-The application is a **military equipment checkout/reservation management system** — a web app for managing loanable inventory (laptops, projectors) and the cadets and instructors who borrow it.
+Originally written as coursework for **IS450 Distributed Application Engineering** at West Point (2007), targeting the LAMP stack. Since restored, modernized to PHP 8, and completed into a working application.
 
 ---
 
