@@ -11,7 +11,7 @@ class EquipmentManager extends AbstractManager
 	public function mgrSearchForEquipmentBySerialNumber($serialNumber)
 	{
 		$tempEquipment = new Equipment();
-		$query = "SELECT * FROM equipmentTable WHERE serialNumber = '" . $serialNumber . "';";
+		$query = "SELECT * FROM equipmentTable WHERE serialNumber = " . $this->mDb->qStr($serialNumber) . ";";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet || !$resultSet->fields)
 		{
@@ -33,7 +33,7 @@ class EquipmentManager extends AbstractManager
 			FROM equipmentTable
 			JOIN laptops
 			ON equipmentTable.serialNumber=laptops.serialNumber
-			WHERE laptops.serialNumber = '" . $serialNumber . "';";
+			WHERE laptops.serialNumber = " . $this->mDb->qStr($serialNumber) . ";";
 			$resultSet = $this->mDb->Execute($query);
 			if(!$resultSet || !$resultSet->fields)
 			{
@@ -49,7 +49,7 @@ class EquipmentManager extends AbstractManager
 	function mgrAddEquipment($serialNumber,$availability,$dateAdded,$workingStatus,$role)
 	{
 		$query = "INSERT INTO equipmentTable (serialNumber,availability,dateAdded,workingStatus,role)
-		VALUES ('" . $serialNumber . "'," . $availability . ",'" . $dateAdded . "','" . $workingStatus . "','" . $role . "');";
+		VALUES (" . $this->mDb->qStr($serialNumber) . "," . (int)$availability . "," . $this->mDb->qStr($dateAdded) . "," . $this->mDb->qStr($workingStatus) . "," . $this->mDb->qStr($role) . ");";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
@@ -66,7 +66,7 @@ class EquipmentManager extends AbstractManager
 	# Defines a manager Add function for an instance of laptop
 	public function mgrAddLaptop($serialNumber,$image)
 	{
-		$query = "INSERT INTO laptops (serialNumber,image) VALUES ('" . $serialNumber . "','" . $image . "');";
+		$query = "INSERT INTO laptops (serialNumber,image) VALUES (" . $this->mDb->qStr($serialNumber) . "," . $this->mDb->qStr($image) . ");";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
@@ -84,8 +84,8 @@ class EquipmentManager extends AbstractManager
 	public function mgrModifyEquipment($oldSN,$newSN,$availability,$dateAdded,$workingStatus,$role)
 	{
 		$query = "UPDATE equipmentTable
-		SET serialNumber = '" . $newSN . "', availability = " . $availability . ", dateAdded = '" . $dateAdded . "', workingStatus = '" . $workingStatus . "', role = '" . $role . "'
-		WHERE serialNumber = '" . $oldSN . "';";
+		SET serialNumber = " . $this->mDb->qStr($newSN) . ", availability = " . (int)$availability . ", dateAdded = " . $this->mDb->qStr($dateAdded) . ", workingStatus = " . $this->mDb->qStr($workingStatus) . ", role = " . $this->mDb->qStr($role) . "
+		WHERE serialNumber = " . $this->mDb->qStr($oldSN) . ";";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
@@ -102,8 +102,8 @@ class EquipmentManager extends AbstractManager
 		public function mgrModifyLaptop($oldSN,$image)
 	{
 		$query = "UPDATE laptops
-		SET image = '" . $image . "'
-		WHERE serialNumber = '" . $oldSN . "';";
+		SET image = " . $this->mDb->qStr($image) . "
+		WHERE serialNumber = " . $this->mDb->qStr($oldSN) . ";";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
@@ -120,7 +120,7 @@ class EquipmentManager extends AbstractManager
 	# Defines a manager Delete function for an instance of equipment
 		public function mgrDeleteEquipment($serialNumber)
 	{
-		$query = "DELETE FROM equipmentTable WHERE serialNumber = '" . $serialNumber . "';";
+		$query = "DELETE FROM equipmentTable WHERE serialNumber = " . $this->mDb->qStr($serialNumber) . ";";
 		$resultSet = $this->mDb->Execute($query);
 		if(!$resultSet)
 		{
