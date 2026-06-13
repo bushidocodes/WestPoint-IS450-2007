@@ -39,7 +39,8 @@ account uses the password **`abc`**:
 | `x22222` | Anna Williams | cadet | USCC |
 | `x33333` | Bob Jones | cadet | USCC |
 
-These are demo credentials seeded in `sql/isd.sql`; see #31 for hashing them.
+These are demo credentials seeded in `sql/isd.sql`. The stored values are bcrypt
+hashes (PHP `password_hash`), not plaintext; the password is still `abc`.
 
 Test pages (run against the live database):
 - `http://localhost:8080/tests/testAll.php` — equipment integration tests
@@ -182,9 +183,11 @@ has since been restored and modernized:
 - **Schema repaired** — the original dump had syntax errors, missing tables (`cadetTable`, `instructorTable`), and a missing `role` column; all fixed in `sql/isd.sql`.
 - **Completed the design** — the original submission's use-case documents (see `docs/turn in/`) describe a checkout system, but only the equipment data layer was implemented. The People CRUD, Projector subtype, reservation checkout/checkin flow, and the entire web UI in `app/` were added to realize the original design.
 
+- **Hashed credentials** — `authenticationTable` stores bcrypt hashes
+  (`password_hash`, `PASSWORD_DEFAULT`) in a `varchar(255)` column; the login
+  flow verifies with `password_verify` and transparently re-hashes any legacy
+  plaintext or weaker-cost row on a successful login.
+
 Remaining period-authentic quirks, kept intentionally:
-- **Plaintext passwords** in `authenticationTable` — the session login flow
-  (`app/login.php`) validates against them as-is; hashing them is a recommended
-  follow-up.
 - **HTML via string concatenation** — no templating engine.
 - **No framework** — raw PHP, exactly as taught in 2007.

@@ -67,7 +67,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `authenticationTable`;
 CREATE TABLE `authenticationTable` (
-  `password` varchar(10) NOT NULL default '',
+  `password` varchar(255) NOT NULL default '',
   `userID` varchar(6) NOT NULL default '',
   KEY `userID` (`userID`),
   CONSTRAINT `authenticationTable_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `personTable` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -75,7 +75,9 @@ CREATE TABLE `authenticationTable` (
 
 /*!40000 ALTER TABLE `authenticationTable` DISABLE KEYS */;
 LOCK TABLES `authenticationTable` WRITE;
-INSERT INTO `authenticationTable` VALUES ('abc','x11111'),('abc','x22222'),('abc','x33333'),('abc','g11111'),('abc','r12345');
+-- Passwords are bcrypt hashes (PHP password_hash, PASSWORD_DEFAULT). Every demo
+-- account's plaintext password is still `abc`; verify with password_verify().
+INSERT INTO `authenticationTable` VALUES ('$2y$10$mWBL2fLzltzMGqwSlkrMeORbfBiKt13JqEfdjhfu8wTP4rCGXH0Cq','x11111'),('$2y$10$I46WD0ZM2WIiCHOrHlo7U.qNfNbNqV8e5mCTkXbXUf/fB6TWSjQwS','x22222'),('$2y$10$KQrno9Y84emNbxTp5GkTzueZ.HuZgpmVrZ23zh/VMLLh255oipMDS','x33333'),('$2y$10$D9yNqnuhcMX7qYJ/AIwwjubroq5uNpUmD6.8vq7up.BFufhDS2uuC','g11111'),('$2y$10$Snz6m7Rum9zE0gRCuRcyGep73isgutR01Dw2awzQG0S/sqq9BeRYq','r12345');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `authenticationTable` ENABLE KEYS */;
 
