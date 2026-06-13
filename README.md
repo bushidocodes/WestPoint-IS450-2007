@@ -88,7 +88,7 @@ Test pages (run against the live database):
 ├── adodb/                      # ADODB 5.22.11 library (required dependency)
 ├── index.php                   # Redirects / to /app/
 ├── Dockerfile                  # PHP 8.3 + Apache + mysqli
-└── docker-compose.yml          # Full stack: web + MySQL 8.0
+└── docker-compose.yml          # Full stack: web + MySQL 8.4
 ```
 
 ---
