@@ -31,6 +31,7 @@
 </head>
 <body>
 <div id="banner"><h1><a href="/app/">IS450 Equipment Management System</a></h1></div>
+<?php if(!empty($_SESSION['userID'])): ?>
 <div id="nav">
     <a href="/app/">Dashboard</a>
     <a href="/app/people/">People</a>
@@ -38,13 +39,10 @@
     <a href="/app/equipment/">Equipment</a>
     <a href="/app/equipment/search.php">Find Equipment</a>
     <a href="/app/reservations/">Reservations</a>
-<?php if(!empty($_SESSION['userID'])): ?>
     <a href="/app/people/add.php">Add Person</a>
     <a href="/app/equipment/add.php">Add Equipment</a>
     <a href="/app/reservations/checkout.php">Check Out</a>
     <a href="/app/logout.php" style="float:right">Log out (<?php print(htmlspecialchars($_SESSION['userID'])); ?>)</a>
-<?php else: ?>
-    <a href="/app/login.php" style="float:right">Log in</a>
-<?php endif; ?>
 </div>
+<?php endif; ?>
 <div id="content">
