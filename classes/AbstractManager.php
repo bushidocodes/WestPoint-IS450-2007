@@ -34,7 +34,12 @@ require_once(dirname(__FILE__) . '/../adodb/adodb.inc.php');
 		{
 			$host = getenv('MYSQL_HOST') ?: 'localhost';
 			$user = getenv('MYSQL_USER') ?: 'root';
-			$pass = getenv('MYSQL_PASSWORD') ?: 'abc';
+			$pass = getenv('MYSQL_PASSWORD');
+			if ($pass === false || $pass === '')
+			{
+				die( "<br/>AbstractManager::OpenDb() MYSQL_PASSWORD is " .
+					"not set. Set it in the environment (see .env.example)." );
+			}
 			$this->mDb = ADONewConnection('mysqli');
 			$connected = $this->mDb->Connect($host, $user, $pass, 'isd');
 			if(!$connected)
