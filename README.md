@@ -10,6 +10,15 @@ Originally written as coursework for **IS450 Distributed Application Engineering
 
 Requires Docker and Docker Compose.
 
+First create your local `.env` from the template and set a database password:
+
+```bash
+cp .env.example .env
+# edit .env and set MYSQL_ROOT_PASSWORD to a value of your choosing
+```
+
+Then build and start:
+
 ```bash
 docker compose up --build
 ```
@@ -152,7 +161,7 @@ has since been restored and modernized:
 
 - **PHP 8.3 compatible** — null-safe result handling, `??` defaults for superglobals, `session_status()` guards.
 - **SQL injection fixed** — all user-supplied values pass through ADODB's `qStr()`.
-- **Credentials via environment** — `MYSQL_HOST` / `MYSQL_USER` / `MYSQL_PASSWORD` (defaults `localhost` / `root` / `abc` for manual setups).
+- **Credentials via environment** — `MYSQL_HOST` / `MYSQL_USER` / `MYSQL_PASSWORD`. `MYSQL_PASSWORD` is required and has no built-in default; for Docker it comes from `MYSQL_ROOT_PASSWORD` in your `.env` (see `.env.example`). `MYSQL_HOST` / `MYSQL_USER` default to `localhost` / `root` for manual setups.
 - **Schema repaired** — the original dump had syntax errors, missing tables (`cadetTable`, `instructorTable`), and a missing `role` column; all fixed in `sql/isd.sql`.
 - **Completed the design** — the original submission's use-case documents (see `docs/turn in/`) describe a checkout system, but only the equipment data layer was implemented. The People CRUD, Projector subtype, reservation checkout/checkin flow, and the entire web UI in `app/` were added to realize the original design.
 
