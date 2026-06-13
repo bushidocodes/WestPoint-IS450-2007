@@ -1,4 +1,5 @@
 <?php
+	require_once(dirname(__FILE__) . "/../includes/auth_check.php");
 	require_once(dirname(__FILE__) . "/../../classes/Reservation.php");
 
 	if(session_status() === PHP_SESSION_NONE) session_start();

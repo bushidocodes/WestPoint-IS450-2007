@@ -27,6 +27,10 @@ Then open **http://localhost:8080/** (redirects to `/app/`). The schema and seed
 data load automatically on first run. If you change `sql/isd.sql`, recreate the
 database volume with `docker compose down -v` before starting again.
 
+Browsing (dashboard, lists, search) is open, but adding, editing, deleting, and
+checking equipment in/out require logging in. Use any seeded `userID` with the
+seed password `abc` — for example **`g11111` / `abc`**.
+
 Test pages (run against the live database):
 - `http://localhost:8080/tests/testAll.php` — equipment integration tests
 - `http://localhost:8080/tests/testPerson.php` — person hierarchy + CRUD tests
@@ -63,13 +67,16 @@ Test pages (run against the live database):
 .
 ├── app/                        # Web application (UI pages)
 │   ├── index.php               # Dashboard: counts + current reservations
-│   ├── includes/               # Shared header (nav, styles) and footer
+│   ├── login.php               # Session login (validates authenticationTable)
+│   ├── logout.php              # Destroys the session
+│   ├── includes/               # Shared header (nav, styles), footer, auth_check gate
 │   ├── people/                 # List / search / add / edit / delete people
 │   ├── equipment/              # List / search / add / edit / delete equipment
 │   └── reservations/           # List / check out / check in
 │
 ├── classes/                    # Domain library (Manager / Entity pattern)
 │   ├── AbstractManager.php     # ADODB connection lifecycle (base for all managers)
+│   ├── AuthManager.php         # Verifies login credentials (authenticationTable)
 │   ├── Person.php              # Person entity + CRUD operations
 │   ├── Cadet.php               # Cadet subclass (company, year, instructor)
 │   ├── Instructor.php          # Instructor subclass (course)
@@ -166,6 +173,8 @@ has since been restored and modernized:
 - **Completed the design** — the original submission's use-case documents (see `docs/turn in/`) describe a checkout system, but only the equipment data layer was implemented. The People CRUD, Projector subtype, reservation checkout/checkin flow, and the entire web UI in `app/` were added to realize the original design.
 
 Remaining period-authentic quirks, kept intentionally:
-- **Plaintext passwords** in `authenticationTable` (no login flow exists yet).
+- **Plaintext passwords** in `authenticationTable` — the session login flow
+  (`app/login.php`) validates against them as-is; hashing them is a recommended
+  follow-up.
 - **HTML via string concatenation** — no templating engine.
 - **No framework** — raw PHP, exactly as taught in 2007.
