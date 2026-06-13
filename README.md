@@ -27,9 +27,9 @@ Then open **http://localhost:8080/** (redirects to `/app/`). The schema and seed
 data load automatically on first run. If you change `sql/isd.sql`, recreate the
 database volume with `docker compose down -v` before starting again.
 
-Browsing (dashboard, lists, search) is open, but adding, editing, deleting, and
-checking equipment in/out require logging in. Every seeded account uses the
-password **`abc`**:
+The application requires logging in: any unauthenticated request lands on the
+login page, and a successful login takes you to the dashboard. Every seeded
+account uses the password **`abc`**:
 
 | User ID | Name | Role | Department |
 |---------|------|------|------------|
