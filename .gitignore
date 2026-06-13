@@ -1,1 +1,4 @@
 .playwright-mcp/
+
+# Local secrets — never commit
+.env
