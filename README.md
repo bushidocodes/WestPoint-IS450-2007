@@ -28,8 +28,18 @@ data load automatically on first run. If you change `sql/isd.sql`, recreate the
 database volume with `docker compose down -v` before starting again.
 
 Browsing (dashboard, lists, search) is open, but adding, editing, deleting, and
-checking equipment in/out require logging in. Use any seeded `userID` with the
-seed password `abc` — for example **`g11111` / `abc`**.
+checking equipment in/out require logging in. Every seeded account uses the
+password **`abc`**:
+
+| User ID | Name | Role | Department |
+|---------|------|------|------------|
+| `g11111` | Sir Hooah | instructor | BTD |
+| `r12345` | Follow Me | instructor | DPE |
+| `x11111` | John Smith | cadet | USCC |
+| `x22222` | Anna Williams | cadet | USCC |
+| `x33333` | Bob Jones | cadet | USCC |
+
+These are demo credentials seeded in `sql/isd.sql`; see #31 for hashing them.
 
 Test pages (run against the live database):
 - `http://localhost:8080/tests/testAll.php` — equipment integration tests
@@ -146,7 +156,7 @@ Database name: `isd`.
 | `cadetTable` | `userID (FK)`, `instructor`, `company`, `year`, `phoneNum` | Extends personTable |
 | `instructorTable` | `userID (FK)`, `course`, `phoneNum` | Extends personTable |
 | `submitReservationTable` | `dateOut`, `dateIn`, `serialNumber (FK)`, `userID (FK)` | Equipment reservations |
-| `authenticationTable` | `userID (FK)`, `password` | Login credentials (not yet used by the UI) |
+| `authenticationTable` | `userID (FK)`, `password` | Login credentials, checked by `app/login.php` |
 | `departmentTable` | `department (PK)` | BTD, DFL, DPE, EECS, USCC |
 
 Sample data includes serial numbers `000111`–`000120` (laptops and projectors),
